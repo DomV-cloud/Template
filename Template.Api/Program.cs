@@ -20,6 +20,18 @@ var builder = WebApplication.CreateBuilder(args);
 
     builder.Services.AddDbContext<TemplateContext>(options =>
                options.UseSqlServer(builder.Configuration.GetConnectionString("sqlConnection")));
+
+    builder.Services.AddCors(options =>
+    {
+        options.AddDefaultPolicy(
+            builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .SetIsOriginAllowedToAllowWildcardSubdomains()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+    });
 }
 
 var app = builder.Build();
@@ -35,6 +47,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseCors();
 
 app.UseMiddleware<ErrorHandlingMiddleware>();
 
